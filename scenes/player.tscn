@@ -1,18 +1,51 @@
-[gd_scene load_steps=4 format=3 uid="uid://caengk7hhpjs8"]
+[gd_scene load_steps=6 format=3 uid="uid://caengk7hhpjs8"]
 
 [ext_resource type="Script" path="res://scripts/player.gd" id="1_23ilv"]
-[ext_resource type="Texture2D" uid="uid://b5cibih65lnwp" path="res://icon.svg" id="1_h0e5h"]
+[ext_resource type="Texture2D" uid="uid://dr7c0nc4hu28b" path="res://assets/Ships.png" id="2_2qrau"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_h53ks"]
-size = Vector2(75, 73)
+[sub_resource type="CircleShape2D" id="CircleShape2D_kkx6r"]
+radius = 4.0
+
+[sub_resource type="Shader" id="Shader_qur1c"]
+code = "shader_type canvas_item;
+
+void vertex() {
+	// Called for every vertex the material is visible on.
+}
+
+void fragment() {
+	// Called for every pixel the material is visible on.
+	vec4 input_color = texture(TEXTURE, UV);
+	vec4 output_color = input_color;
+	if (input_color.a > 0.0) {
+		output_color.r = TIME;
+		output_color.g = TIME;
+		output_color.b = TIME;
+
+	}
+	COLOR = input_color;
+}
+
+//void light() {
+	// Called for every pixel for every light affecting the CanvasItem.
+	// Uncomment to replace the default light processing function with this one.
+//}
+"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_pqgsk"]
+shader = SubResource("Shader_qur1c")
 
 [node name="Player" type="CharacterBody2D"]
 script = ExtResource("1_23ilv")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
-scale = Vector2(0.6, 0.6)
-texture = ExtResource("1_h0e5h")
-
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-scale = Vector2(0.9, 0.9)
-shape = SubResource("RectangleShape2D_h53ks")
+visible = false
+shape = SubResource("CircleShape2D_kkx6r")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+material = SubResource("ShaderMaterial_pqgsk")
+rotation = 1.5708
+scale = Vector2(0.6, 0.6)
+texture = ExtResource("2_2qrau")
+region_enabled = true
+region_rect = Rect2(48, 0, 16, 16)

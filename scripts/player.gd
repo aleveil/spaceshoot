@@ -3,7 +3,7 @@ extends CharacterBody2D
 signal shoot_bullet(bullet_scene, pos)
 
 var bullet_scene = preload("res://scenes/bullet.tscn")
-const SPEED = 400
+const SPEED = 100
 var last_shoot_timestamp = 0
 var shoot_cooldown = 1000
 

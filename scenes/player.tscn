@@ -1,10 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://caengk7hhpjs8"]
+[gd_scene load_steps=9 format=3 uid="uid://caengk7hhpjs8"]
 
 [ext_resource type="Script" path="res://scripts/player.gd" id="1_23ilv"]
-[ext_resource type="Texture2D" uid="uid://dr7c0nc4hu28b" path="res://assets/Ships.png" id="2_2qrau"]
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_kkx6r"]
-radius = 4.0
+[ext_resource type="PackedScene" uid="uid://cbagb4d8w72ef" path="res://scenes/bullet.tscn" id="2_gg4on"]
+[ext_resource type="Texture2D" uid="uid://dr7c0nc4hu28b" path="res://assets/sprites/Ships.png" id="3_y1pem"]
 
 [sub_resource type="Shader" id="Shader_qur1c"]
 code = "shader_type canvas_item;
@@ -35,17 +33,66 @@ void fragment() {
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_pqgsk"]
 shader = SubResource("Shader_qur1c")
 
-[node name="Player" type="CharacterBody2D"]
-script = ExtResource("1_23ilv")
+[sub_resource type="CircleShape2D" id="CircleShape2D_kkx6r"]
+radius = 8.0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-visible = false
-shape = SubResource("CircleShape2D_kkx6r")
+[sub_resource type="Animation" id="Animation_a2yc5"]
+resource_name = "player_idle"
+length = 2.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1, 2),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(5, 0), Vector2(0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite2D:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.5, 1, 1.5, 2),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(0.9, 1.1), Vector2(1, 1), Vector2(0.9, 1.1), Vector2(1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_f7myh"]
+_data = {
+"player_idle": SubResource("Animation_a2yc5")
+}
+
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("sprite", "shooting_point")]
+script = ExtResource("1_23ilv")
+bullet_scene = ExtResource("2_gg4on")
+sprite = NodePath("Sprite2D")
+shooting_point = NodePath("ShootingPoint")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 material = SubResource("ShaderMaterial_pqgsk")
+position = Vector2(1.50693, 0)
 rotation = 1.5708
-scale = Vector2(0.6, 0.6)
-texture = ExtResource("2_2qrau")
+scale = Vector2(0.939723, 1.06028)
+texture = ExtResource("3_y1pem")
 region_enabled = true
 region_rect = Rect2(48, 0, 16, 16)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_kkx6r")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_f7myh")
+}
+autoplay = "player_idle"
+
+[node name="ShootingPoint" type="Marker2D" parent="."]
+position = Vector2(11, 0)

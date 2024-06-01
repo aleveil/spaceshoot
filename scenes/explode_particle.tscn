@@ -1,0 +1,55 @@
+[gd_scene load_steps=8 format=3 uid="uid://dsjymfq62562a"]
+
+[ext_resource type="Texture2D" uid="uid://bclp4n7bt4eiq" path="res://assets/sprites/Bullets.png" id="1_dloke"]
+[ext_resource type="Script" path="res://scripts/explode_particle.gd" id="1_drma0"]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_8o6jo"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4qhh0"]
+atlas = ExtResource("1_dloke")
+region = Rect2(24, 24, 8, 8)
+filter_clip = true
+
+[sub_resource type="Curve" id="Curve_0g54w"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), -3.28205, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Gradient" id="Gradient_c50ay"]
+interpolation_mode = 2
+offsets = PackedFloat32Array(0, 0.487805, 0.829268, 1)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 1, 0.473976, 0.473976, 0.473976, 1, 0.47451, 0.47451, 0.47451, 0)
+
+[sub_resource type="Gradient" id="Gradient_fp6e4"]
+offsets = PackedFloat32Array(0, 0.298781, 1)
+colors = PackedColorArray(1, 0.262745, 0.0980392, 1, 1, 0.529412, 0.0980392, 1, 0.724643, 0.724643, 0.724643, 1)
+
+[node name="ExplodeParticle" type="Node2D" node_paths=PackedStringArray("particle")]
+script = ExtResource("1_drma0")
+particle = NodePath("CPUParticles2D")
+
+[node name="CPUParticles2D" type="CPUParticles2D" parent="."]
+material = SubResource("CanvasItemMaterial_8o6jo")
+emitting = false
+amount = 25
+lifetime = 2.0
+one_shot = true
+explosiveness = 0.98
+randomness = 1.0
+lifetime_randomness = 1.0
+texture = SubResource("AtlasTexture_4qhh0")
+direction = Vector2(0, 0)
+spread = 180.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 15.0
+initial_velocity_max = 75.0
+angular_velocity_min = -25.0
+angular_velocity_max = 25.0
+scale_amount_min = 0.5
+scale_amount_max = 1.2
+scale_amount_curve = SubResource("Curve_0g54w")
+color_ramp = SubResource("Gradient_c50ay")
+color_initial_ramp = SubResource("Gradient_fp6e4")
+hue_variation_min = -1.0
+hue_variation_max = 1.0
+
+[connection signal="finished" from="CPUParticles2D" to="." method="_on_cpu_particles_2d_finished"]

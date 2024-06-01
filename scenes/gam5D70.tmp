@@ -2,9 +2,9 @@
 
 [ext_resource type="Script" path="res://scripts/game.gd" id="1_cxufh"]
 [ext_resource type="PackedScene" uid="uid://caengk7hhpjs8" path="res://scenes/player.tscn" id="1_kxc8q"]
+[ext_resource type="AudioStream" uid="uid://jbar3nigs5o8" path="res://assets/sounds/shoot.wav" id="2_j702s"]
 [ext_resource type="PackedScene" uid="uid://ukwq5gqjdyq3" path="res://scenes/wall.tscn" id="3_n54mp"]
 [ext_resource type="PackedScene" uid="uid://d08lrgblc3tj7" path="res://scenes/enemy.tscn" id="5_gte6s"]
-[ext_resource type="Script" path="res://scripts/enemy_spawner.gd" id="6_261qv"]
 
 [sub_resource type="Gradient" id="Gradient_w830a"]
 offsets = PackedFloat32Array(0)
@@ -13,14 +13,26 @@ colors = PackedColorArray(0, 0.0196078, 0.12549, 1)
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_c8qij"]
 gradient = SubResource("Gradient_w830a")
 
-[node name="Game" type="Node2D"]
+[node name="Game" type="Node2D" node_paths=PackedStringArray("player", "bullet_container", "enemy_container", "enemy_spawn_area", "audio_player")]
 script = ExtResource("1_cxufh")
+player = NodePath("Player")
+bullet_container = NodePath("BulletContainer")
+enemy_container = NodePath("EnemyContainer")
+enemy_spawn_area = NodePath("EnemySpawnArea")
+enemy_scene = ExtResource("5_gte6s")
+audio_player = NodePath("AudioStreamPlayer")
 
 [node name="Player" parent="." instance=ExtResource("1_kxc8q")]
 position = Vector2(-90, 0)
 
 [node name="Camera2D" type="Camera2D" parent="."]
 zoom = Vector2(5, 5)
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_j702s")
+bus = &"SFX"
+
+[node name="BulletContainer" type="Node" parent="."]
 
 [node name="WallContainer" type="Node" parent="."]
 
@@ -34,21 +46,10 @@ scale = Vector2(15, 0.2)
 
 [node name="EnemyContainer" type="Node" parent="."]
 
-[node name="EnemySpawner" type="Node" parent="." node_paths=PackedStringArray("enemy_container", "top_marker", "bottom_marker")]
-script = ExtResource("6_261qv")
-enemy_container = NodePath("../EnemyContainer")
-enemy_scene = ExtResource("5_gte6s")
-top_marker = NodePath("TopSpawnMarker")
-bottom_marker = NodePath("BottomSpawnMarker")
-
-[node name="TopSpawnMarker" type="Marker2D" parent="EnemySpawner"]
-position = Vector2(150, -55)
-
-[node name="BottomSpawnMarker" type="Marker2D" parent="EnemySpawner"]
-position = Vector2(150, 55)
-
 [node name="Background" type="Sprite2D" parent="."]
 z_index = -10
 rotation = -1.5708
 scale = Vector2(0.6, 300)
 texture = SubResource("GradientTexture1D_c8qij")
+
+[node name="EnemySpawnArea" type="Node2D" parent="."]

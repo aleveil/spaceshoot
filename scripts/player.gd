@@ -1,18 +1,19 @@
 extends CharacterBody2D
 
-signal shoot_bullet(bullet_scene, pos)
-
 @export var bullet_scene : PackedScene
 @export var sprite : Sprite2D
 @export var shooting_point : Marker2D
-const SPEED = 100
-var last_shoot_timestamp = 0
-var shoot_cooldown = 250
-enum ShipType {BLUE = 0, ORANGE = 16, RED = 32, WHITE = 48}
+@export var sfx_shoot : AudioStream
+
+const SPEED := 100
+var type := 0
+var shoot_power := 2
+
+var last_shoot_timestamp := 0
+var shoot_cooldown := 100
 
 func _ready():
-	var rand_offset_ship = ShipType[ShipType.keys()[randi() % ShipType.size()]]
-	sprite.region_rect.position.x = rand_offset_ship
+	sprite.region_rect.position.x = type * 16
 
 func _physics_process(_delta):
 	var direction := Input.get_axis("move_up", "move_down")
@@ -26,5 +27,9 @@ func _process(_delta):
 		shoot()
 
 func shoot():
-	shoot_bullet.emit(bullet_scene, shooting_point.global_position)
 	last_shoot_timestamp = Time.get_ticks_msec()
+	var bullet = bullet_scene.instantiate()
+	bullet.global_position = shooting_point.global_position
+	bullet.damage = shoot_power
+	get_parent().add_child(bullet)
+	AudioManager.play_sound(sfx_shoot, randf_range(0.6, 1.2))

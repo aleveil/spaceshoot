@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3 uid="uid://cbagb4d8w72ef"]
+[gd_scene load_steps=6 format=3 uid="uid://cbagb4d8w72ef"]
 
 [ext_resource type="Script" path="res://scripts/bullet.gd" id="1_ynajs"]
 [ext_resource type="Texture2D" uid="uid://bclp4n7bt4eiq" path="res://assets/sprites/Bullets.png" id="2_efhrk"]
@@ -6,21 +6,53 @@
 [sub_resource type="CircleShape2D" id="CircleShape2D_pyy04"]
 radius = 4.0
 
-[node name="Bullet" type="Area2D"]
+[sub_resource type="Animation" id="Animation_bdvuq"]
+resource_name = "idle_bullet"
+length = 0.5
+loop_mode = 1
+step = 0.05
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:scale")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.25, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1.2, 1.2), Vector2(1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_id1hs"]
+_data = {
+"idle_bullet": SubResource("Animation_bdvuq")
+}
+
+[node name="Bullet" type="Area2D" node_paths=PackedStringArray("sprite")]
 z_index = -1
 script = ExtResource("1_ynajs")
+sprite = NodePath("Sprite2D")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 rotation = 1.5708
+scale = Vector2(1.10994, 1.10994)
 texture = ExtResource("2_efhrk")
 region_enabled = true
 region_rect = Rect2(0, 0, 8, 8)
+region_filter_clip_enabled = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_pyy04")
 
 [node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
 scale = Vector2(1.15, 1.15)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_id1hs")
+}
+autoplay = "idle_bullet"
 
 [connection signal="area_entered" from="." to="." method="_on_area_entered"]
 [connection signal="screen_exited" from="VisibleOnScreenNotifier2D" to="." method="_on_visible_on_screen_notifier_2d_screen_exited"]
